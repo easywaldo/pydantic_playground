@@ -1,5 +1,5 @@
 from typing import List
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 """
 pydantic dict()
@@ -25,6 +25,26 @@ class Bar(BaseModel):
 class Spam(BaseModel):
     foo: Foo
     bars: List[Bar]
+    
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.ext.declarative import declarative_base
+
+Base = declarative_base()
+class CompanyOrm(Base):
+    __tablename__ = 'companies'
+    id = Column(Integer, primary_key=True, nullable=False)
+    public_key = Column(String(20), index=True, nullable=False, unique=True)
+    name = Column(String(63), unique=True)
+    domains = Column(ARRAY(String(255)))    
+
+class CompayModel(BaseModel):
+    id: int
+    public_key: constr(max_length=20)
+    domains: List[constr(max_length=255)]
+    
+    class Config:
+        orm_mode = True
 
 
 def main():
@@ -56,6 +76,20 @@ def main():
     
     m = Spam(foo={'count': 100}, bars=[{'apple': 'x1'}, {'banana': 'y1'}])
     print(m)
+    print(m.dict())
+    
+    
+    
+    co_orm = CompanyOrm(
+        id=123,
+        public_key='testing orm mode',
+        domains=['fastapi.org', 'django.org']
+    )
+    print('co_orm =============================')
+    print(co_orm)
+    co_model = CompayModel.from_orm(co_orm)
+    print('co_model =============================')
+    print(co_model)
 
 if __name__ == '__main__':
     main()
