@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 """
@@ -10,6 +11,20 @@ pydantic dict()
 class User(BaseModel):
     id: int
     name = 'easywaldo'
+    
+
+class Foo(BaseModel):
+    count: int
+    size: float = None
+    
+class Bar(BaseModel):
+    apple = 'x'
+    banana = 'y'
+    
+
+class Spam(BaseModel):
+    foo: Foo
+    bars: List[Bar]
 
 
 def main():
@@ -30,7 +45,17 @@ def main():
     print(user.json())
     print(user_clone.json())
     
-    assert user_clone == user
+    # assert user_clone == user
+    
+    print(user.schema())
+    print(user.schema_json())
+    print('construct() ================================')
+    print(user_clone.construct())
+    print('__fields__ =================================')
+    print(user_clone.__fields__)
+    
+    m = Spam(foo={'count': 100}, bars=[{'apple': 'x1'}, {'banana': 'y1'}])
+    print(m)
 
 if __name__ == '__main__':
     main()
