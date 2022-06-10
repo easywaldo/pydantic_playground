@@ -28,3 +28,4 @@ pydantic_model = MyModel.from_orm(sql_model)
 
 print(pydantic_model.dict())
 print(pydantic_model.dict(by_alias=True))
+print(pydantic_model.dict(by_alias=False))
