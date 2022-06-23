@@ -1,4 +1,8 @@
-from pydantic import BaseModel, ValidationError, validator
+from pydantic import BaseModel, ValidationError, validator, PydanticValueError
+
+class NotMatchError(PydanticValueError):
+    code = 'not_match_error'
+    msg_template = 'value is not include squad, {wrong_value}'
 
 class Model(BaseModel):
     department_name: str
@@ -6,7 +10,8 @@ class Model(BaseModel):
     @validator('department_name')
     def value_should_include_squad(cls, v: str):
         if not v.endswith('squad'):
-            raise ValidationError('value should include squad')
+            # raise ValidationError('value should include squad')
+            raise NotMatchError(wrong_value=v)
         return v
 
 try:
