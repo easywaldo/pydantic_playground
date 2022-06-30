@@ -16,3 +16,5 @@ print(BarModel.__fields__.keys())
 
 bar_sample = BarModel(foo="waldo")
 print(bar_sample)
+print()
+print(BarModel.schema())
