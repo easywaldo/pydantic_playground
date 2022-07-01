@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
 class FooBarModel(BaseModel):
-    a: str
-    b: dict
+    a: str  # immutable
+    b: dict # mutable
     
     class Config:
         allow_mutation = False
