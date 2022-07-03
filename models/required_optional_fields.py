@@ -12,3 +12,15 @@ try:
     Model(a=1, b=2)
 except ValidationError as e:
     print(e)
+    
+
+class ModelF(BaseModel):
+    a: int
+    b: int = ...
+    c: int = Field(...)
+    
+
+try:
+    ModelF(a=1, b=1, c=3)
+except ValidationError as e:
+    print(e)
