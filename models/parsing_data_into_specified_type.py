@@ -10,3 +10,8 @@ item_data = [{'id': 1, 'name': 'easywaldo'}]
 
 items = parse_obj_as(List[Item], item_data)
 print(items)
+
+
+wrong_item_data = {'id': 100,}
+items = parse_obj_as(List[Item], [wrong_item_data])
+print(items)
