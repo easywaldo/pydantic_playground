@@ -1,6 +1,6 @@
 from typing_extensions import TypedDict
 
-from pydantic import BaseModel, Extra, ValidationError
+from pydantic import BaseModel, Extra, ValidationError, HttpUrl
 
 class UserIdentity(TypedDict, total=False):
     name: str
@@ -47,5 +47,23 @@ try:
             'identity': {'name': 'Smith', 'sur_name': 'John'}, 'age': '42', 'email': 'john@example.com',
         }
     )
+except ValidationError as e:
+    print(e)
+
+
+class MyModel(BaseModel):
+    url: HttpUrl
+    
+m = MyModel(url="http://example.com")
+print(m.url)
+
+try:
+    MyModel(url="ftp://invalid.url")
+except ValidationError as e:
+    print(e)
+    
+
+try:
+    MyModel(url="not a url")
 except ValidationError as e:
     print(e)
