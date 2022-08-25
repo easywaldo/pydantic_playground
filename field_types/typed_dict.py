@@ -1,6 +1,7 @@
 from typing_extensions import TypedDict
 
 from pydantic import BaseModel, Extra, ValidationError, HttpUrl, PostgresDsn, validator
+from pydantic.color import Color
 
 class UserIdentity(TypedDict, total=False):
     name: str
@@ -83,5 +84,25 @@ print(m.db)
 
 try:
     MyDatabaseModel(db='postgres://user:pass@localhost:5432')
+except ValidationError as e:
+    print(e)
+
+
+c = Color('ff00ff')
+print(c.as_named())
+
+print(c.as_hex())
+
+c2 = Color('green')
+print(c2.as_rgb_tuple())
+
+print(c2.original())
+print(repr(Color('hsl(180, 100%, 50%)')))
+
+class ColorModel(BaseModel):
+    color: Color
+    
+try:
+    ColorModel(color='hello')
 except ValidationError as e:
     print(e)
