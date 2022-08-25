@@ -1,6 +1,6 @@
 from typing_extensions import TypedDict
 
-from pydantic import BaseModel, Extra, ValidationError, HttpUrl, PostgresDsn, validator
+from pydantic import BaseModel, Extra, ValidationError, HttpUrl, PostgresDsn, validator, SecretStr, SecretBytes
 from pydantic.color import Color
 
 class UserIdentity(TypedDict, total=False):
@@ -106,3 +106,34 @@ try:
     ColorModel(color='hello')
 except ValidationError as e:
     print(e)
+
+
+class SimpleModel(BaseModel):
+    password: SecretStr
+    password_bytes: SecretBytes
+    
+sm = SimpleModel(password='easy_waldo', password_bytes=b'easy_waldo')
+print(sm)
+print(sm.password)
+print(sm.dict())
+
+try:
+    SimpleModel(password=[1,2,3], password_bytes=[1,2,3])
+except ValidationError as e:
+    print(e)
+    
+class SimpleModelDumpable(BaseModel):
+    password: SecretStr
+    password_bytes: SecretBytes
+    
+    class Config:
+        json_encoders = {
+            SecretStr: lambda v: v.get_secret_value() if v else None,
+            SecretBytes: lambda v: v.get_secret_value() if v else None,
+        }
+
+sm2 = SimpleModelDumpable(password='easy_waldo', password_bytes=b'easy_waldo')
+print(sm2)
+print(sm2.password)
+print(sm2.dict())
+print(sm2.json())
