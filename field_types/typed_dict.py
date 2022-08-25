@@ -1,6 +1,6 @@
 from typing_extensions import TypedDict
 
-from pydantic import BaseModel, Extra, ValidationError, HttpUrl
+from pydantic import BaseModel, Extra, ValidationError, HttpUrl, PostgresDsn, validator
 
 class UserIdentity(TypedDict, total=False):
     name: str
@@ -65,5 +65,23 @@ except ValidationError as e:
 
 try:
     MyModel(url="not a url")
+except ValidationError as e:
+    print(e)
+    
+    
+class MyDatabaseModel(BaseModel):
+    db: PostgresDsn
+    
+    @validator('db')
+    def check_db_name(cls, v):
+        assert v.path and len(v.path) > 1, 'database must be provided'
+        return v
+    
+
+m = MyDatabaseModel(db='postgres://user:pass@localhost:5432/foobar')
+print(m.db)
+
+try:
+    MyDatabaseModel(db='postgres://user:pass@localhost:5432')
 except ValidationError as e:
     print(e)
